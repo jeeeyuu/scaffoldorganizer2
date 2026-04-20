@@ -55,7 +55,7 @@
       <!-- Brain dump -->
       <rect x="0" y="0" rx="4" ry="4" width="346" height="92" fill="#fffdf8" stroke="#d9d1c3"/>
       <text class="muted10" x="8" y="12">Brain dump</text>
-      <text class="editor-body" x="8" y="28">농진청 데이터 컬럼 정리 먼저 끝내고,</text>
+      <text class="editor-body" x="8" y="28">입력 데이터 컬럼 정리 먼저 끝내고,</text>
       <text class="editor-body" x="8" y="42">preprocessing pipeline 초안 설계.</text>
       <text class="editor-body" x="8" y="56">그 다음 alignment benchmark 재검토.</text>
       <text class="editor-body" x="8" y="70">장기로: long-read RNA foundation model.</text>
@@ -65,7 +65,7 @@
       <rect x="0" y="100" rx="4" ry="4" width="346" height="92" fill="rgba(255,253,248,0.55)" stroke="#d9d1c3"/>
       <text class="muted10" x="8" y="112">Structured markdown (readonly)</text>
       <text class="mono" x="8" y="128">## Summary</text>
-      <text class="mono" x="8" y="142">농진청 데이터 분석 kickoff 하루치.</text>
+      <text class="mono" x="8" y="142">오전 데이터 분석 kickoff 하루치.</text>
       <text class="mono" x="8" y="156">### 지금 할 일 (Active Now)</text>
       <text class="mono" x="8" y="170">- [P1] 데이터 컬럼 정의 확정</text>
       <text class="mono" x="8" y="184">- [P2] preprocessing pipeline 설계</text>
@@ -74,14 +74,14 @@
     <!-- Right column: session title + structure button + session list -->
     <g transform="translate(366, 10)">
       <rect x="0" y="0" rx="4" ry="4" width="200" height="22" fill="#fffdf8" stroke="#d9d1c3"/>
-      <text class="body" x="8" y="15">농진청 kickoff — 4/20</text>
+      <text class="body" x="8" y="15">오전 kickoff — 4/20</text>
 
       <rect x="0" y="28" rx="4" ry="4" width="200" height="22" fill="#fffdf8" stroke="#2f6fa6"/>
       <text class="btn" x="100" y="42" text-anchor="middle" fill="#2f6fa6" font-weight="700">Structure Brain Dump</text>
 
       <!-- Session list -->
       <rect x="0" y="60" rx="4" ry="4" width="200" height="34" fill="#fffdf8" stroke="#d9d1c3"/>
-      <text class="list-title" x="8" y="74">농진청 kickoff — 4/20</text>
+      <text class="list-title" x="8" y="74">오전 kickoff — 4/20</text>
       <text class="list-meta" x="8" y="86">#12 · 2026-04-20T09:10</text>
 
       <rect x="0" y="98" rx="4" ry="4" width="200" height="34" fill="#fffdf8" stroke="#d9d1c3"/>

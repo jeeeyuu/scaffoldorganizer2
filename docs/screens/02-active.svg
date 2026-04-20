@@ -83,7 +83,7 @@
       <text class="title" x="28" y="19">데이터 컬럼 정의 확정 회의</text>
       <rect x="238" y="8" rx="9" ry="9" width="26" height="13" fill="#be3f3f"/>
       <text class="chip" x="251" y="17" text-anchor="middle">P1</text>
-      <text class="body" x="12" y="35">농진청 담당자와 오후 3시 컨퍼런스.</text>
+      <text class="body" x="12" y="35">파트너사 담당자와 오후 3시 컨퍼런스.</text>
       <text class="body" x="12" y="47">질문 리스트 먼저 작성 필요.</text>
       <g transform="translate(10, 56)">
         <rect x="0"  y="0" rx="3" ry="3" width="36" height="16" fill="#fffdf8" stroke="#d9d1c3"/><text class="btn" x="18" y="11" text-anchor="middle">Doing</text>

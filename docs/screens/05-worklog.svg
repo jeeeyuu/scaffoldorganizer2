@@ -56,7 +56,7 @@
       <text class="muted10" x="8" y="12">Work log draft (editable Markdown)</text>
       <text class="mono" x="8" y="28" font-weight="700">📅 업무일지 — 2026-04-20</text>
       <text class="mono" x="8" y="44">## 1. 🟢 오늘 착수한 작업</text>
-      <text class="mono" x="8" y="58">- 농진청 데이터 컬럼 정의 확정</text>
+      <text class="mono" x="8" y="58">- 입력 데이터 컬럼 정의 확정</text>
       <text class="mono" x="8" y="72">- preprocessing pipeline 초안 설계</text>
       <text class="mono" x="8" y="88">## 2. 🔵 진행 중인 작업</text>
       <text class="mono" x="8" y="102">- alignment benchmark 재검토</text>
