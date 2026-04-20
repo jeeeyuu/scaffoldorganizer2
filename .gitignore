@@ -1,0 +1,98 @@
+# ── secrets / local config ────────────────────────────────
+# Everything matching config.*.json is treated as local-only; the public
+# examples and schema are explicitly re-included.
+config/config.json
+config/config.*.json
+!config/config_example.json
+!config/config_docker_example.json
+!config/config.schema.json
+
+.env
+.env.*
+!.env.example
+
+# Credentials / certificates in any folder
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+secrets.*
+credentials.*
+
+# ── personal launcher / release scripts (hardcoded home paths) ──
+scripts/release.sh
+/run.sh
+
+# ── runtime data & outputs ────────────────────────────────
+data/
+logs/
+exports/
+*.log
+*.db
+*.sqlite
+*.sqlite3
+*.sqlite3-journal
+*.sqlite3-wal
+*.sqlite3-shm
+
+# ── build / packaging artefacts ───────────────────────────
+dist/
+build/
+*.spec
+*.egg
+*.egg-info/
+*.manifest
+*.exe
+*.dll
+gui/assets/iconmaking/
+
+# ── python caches ─────────────────────────────────────────
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ── virtualenvs ───────────────────────────────────────────
+.venv/
+venv/
+.venv-*/
+
+# ── notebooks ─────────────────────────────────────────────
+.ipynb_checkpoints/
+
+# ── docker local-only overrides ───────────────────────────
+docker-compose.override.yml
+compose.override.yml
+.docker-cache/
+.docker/
+
+# ── editors / IDE / AI assistants ─────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+# Catches .claude/, .claude.json, .claude.local.json — anything Claude
+# Code drops at the repo root (local sessions, project memory, etc.).
+.claude*
+
+# ── merge / backup cruft ──────────────────────────────────
+*.orig
+*.rej
+*.bak
+
+# ── OS cruft ──────────────────────────────────────────────
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+desktop.ini
+
+# ── tmp / debug dumps ─────────────────────────────────────
+tmp/
+local_debug/
+debug_dumps/
+cli-history*

@@ -1,0 +1,600 @@
+:root {
+  --ink: #1e2528;
+  --muted: #667277;
+  --paper: #f7f4ed;
+  --panel: #fffdf8;
+  --line: #d9d1c3;
+  --green: #26835b;
+  --red: #be3f3f;
+  --amber: #b97118;
+  --blue: #2f6fa6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* The app targets a 600x400 pywebview window. Horizontal scroll is not
+   allowed at any width; vertical scroll is free. */
+html,
+body {
+  width: 100%;
+  max-width: 100vw;
+  margin: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body {
+  color: var(--ink);
+  background:
+    linear-gradient(135deg, rgba(38, 131, 91, 0.11), transparent 35%),
+    linear-gradient(225deg, rgba(47, 111, 166, 0.12), transparent 38%),
+    var(--paper);
+  /* Noto Sans is the base family across the app — same glyphs render on
+     WSL (via fonts-noto-cjk) and Windows (WebView2 ships Noto via
+     Microsoft Store or falls back to Malgun Gothic). Listing the Korean
+     subset first plus the CJK superset means whichever package is
+     installed resolves cleanly without 딩벳 boxes. */
+  font-family:
+    "Noto Sans KR", "Noto Sans CJK KR", "Noto Sans",
+    "Malgun Gothic", "Apple SD Gothic Neo",
+    sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  max-width: 100%;
+}
+
+button {
+  position: relative;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--ink);
+  min-height: 30px;
+  border-radius: 6px;
+  padding: 0 10px;
+  cursor: pointer;
+  transition: border-color 120ms ease, color 120ms ease, opacity 120ms ease;
+  white-space: nowrap;
+}
+
+button:hover:not(:disabled),
+button.active {
+  border-color: var(--blue);
+  color: var(--blue);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.spinner {
+  display: none;
+  width: 10px;
+  height: 10px;
+  margin-left: 6px;
+  border: 2px solid var(--line);
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  vertical-align: middle;
+}
+
+button.busy .spinner {
+  display: inline-block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Layout: topbar / toolbar / workspace flow naturally; command-bar sticks to
+   the bottom of the viewport so the user can always send without scrolling. */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 100vw;
+}
+
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px 6px;
+}
+
+.topbar > div:first-child {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+h1 {
+  margin: 0;
+  /* App title uses the same Noto Sans base as body text — weight carries
+     the hierarchy, not a different family. */
+  font-family:
+    "Noto Sans KR", "Noto Sans CJK KR", "Noto Sans",
+    "Malgun Gothic", "Apple SD Gothic Neo",
+    sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  word-break: keep-all;
+}
+
+.feedback {
+  margin: 2px 0 0;
+  color: var(--muted);
+  min-height: 1.2em;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.feedback[data-level="error"] {
+  color: var(--red);
+  font-weight: 600;
+}
+
+.feedback[data-level="success"] {
+  color: var(--green);
+}
+
+.feedback[data-level="busy"] {
+  color: var(--blue);
+}
+
+/* Busy messages used to animate the trailing dots — but that keeps
+   re-layouting the feedback line and the nearby header jitters every
+   400ms. Keep it purely textual: the text itself already ends with "…". */
+
+.status-strip,
+.toolbar,
+.tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.status-strip {
+  justify-content: flex-end;
+}
+
+.dot {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 3px 7px;
+  background: var(--panel);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.dot.active { color: var(--green); }
+.dot.error  { color: var(--red); }
+.dot.idle   { color: var(--amber); }
+.dot.muted  { color: var(--muted); opacity: 0.7; }
+
+.toolbar {
+  padding: 0 12px 8px;
+}
+
+.toolbar button {
+  font-size: 12px;
+  padding: 0 8px;
+}
+
+/* Workspace: tabs row on top, panel below. Single column at every width
+   because 600px isn't enough for a side nav + content. */
+.workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 12px 10px;
+}
+
+.tabs {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: start;
+}
+
+.tabs button {
+  text-align: center;
+  font-size: 11px;
+  padding: 0 8px;
+  min-height: 26px;
+}
+
+.panel {
+  border: 1px solid var(--line);
+  background: rgba(255, 253, 248, 0.82);
+  border-radius: 8px;
+  padding: 10px;
+  /* Page-level scroll handles overflow — no nested scroll container. */
+  overflow: visible;
+}
+
+.panel-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.panel-toolbar input[type="search"] {
+  flex: 1 1 140px;
+  min-width: 0;
+  padding: 4px 8px;
+  min-height: 28px;
+  font-size: 12px;
+}
+
+.panel-toolbar .meta {
+  flex: 0 0 auto;
+}
+
+.panel-toolbar.hidden {
+  display: none;
+}
+
+.item-grid {
+  /* Two columns at the 600px target viewport — fits comfortably with
+     ~270px per card. Drop to one column on very narrow windows. */
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+@media (max-width: 480px) {
+  .item-grid { grid-template-columns: 1fr; }
+}
+
+.item-card {
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--muted);
+  background: var(--panel);
+  border-radius: 6px;
+  padding: 6px 8px;
+  min-width: 0;
+  transition: box-shadow 120ms ease;
+}
+
+.item-card.status-inbox    { border-left-color: var(--amber); }
+.item-card.status-todo     { border-left-color: var(--blue); }
+.item-card.status-doing {
+  border-left-color: var(--green);
+  box-shadow: 0 4px 14px rgba(38, 131, 91, 0.16);
+}
+.item-card.status-done {
+  border-left-color: var(--muted);
+  opacity: 0.72;
+}
+.item-card.status-archived {
+  border-left-color: var(--line);
+  opacity: 0.55;
+}
+
+/* Priority chip — prominent coloured badge at the card meta row. Pairs
+   with the left-border status colour so the user can read BOTH "what's
+   going on" (colour bar on the left) and "how urgent" (coloured pill)
+   at a glance. P1 also bumps the card's right-side glow a bit so it's
+   hard to miss on a crowded list. */
+.priority-chip {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  color: #ffffff;
+  margin-right: 6px;
+  line-height: 1.5;
+  vertical-align: middle;
+}
+
+.priority-chip.p1 { background: var(--red); }
+.priority-chip.p2 { background: var(--amber); }
+.priority-chip.p3 { background: var(--blue); }
+.priority-chip.p4 { background: var(--muted); opacity: 0.85; }
+.priority-chip.p5 {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--line);
+}
+
+.item-card.priority-1 {
+  box-shadow: 0 2px 8px rgba(190, 63, 63, 0.15), inset 3px 0 0 var(--red);
+}
+.item-card.priority-1 h3 {
+  font-weight: 800;
+}
+.item-card.priority-5 h3 {
+  font-weight: 500;
+  color: var(--muted);
+}
+
+/* --- Compact card layout: checkbox + title + priority in a single header
+   row; optional body; state-aware footer actions. Drops the old #id /
+   type / status / horizon meta line — that data is in the hover-tooltip
+   on the title now, and the border-left colour already signals status. */
+
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.card-head input[type="checkbox"] {
+  flex: 0 0 auto;
+  margin: 0;
+  width: 13px;
+  height: 13px;
+}
+
+.card-head h3 {
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.card-head .priority-chip {
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+.card-body {
+  margin: 4px 0 0;
+  font-size: 11px;
+  line-height: 1.3;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* --- Edit mode: inputs replace the view labels in-place. --- */
+.item-card .edit-title,
+.item-card .edit-content {
+  width: 100%;
+  max-width: 100%;
+  padding: 4px 6px;
+  font-size: 12px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--panel);
+}
+.item-card .edit-priority {
+  flex: 0 0 auto;
+  font-size: 11px;
+  padding: 2px 4px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--panel);
+  min-height: 22px;
+}
+.item-card .edit-content {
+  margin-top: 4px;
+  resize: vertical;
+  min-height: 60px;
+}
+
+.meta {
+  color: var(--muted);
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.card-actions {
+  margin-top: 6px;
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.card-actions button {
+  min-height: 22px;
+  padding: 0 6px;
+  font-size: 10px;
+}
+
+.card-actions .icon-btn {
+  margin-left: auto;   /* push the edit pencil to the right end */
+  padding: 0 5px;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.card-actions .danger {
+  margin-left: auto;
+  border-color: var(--red);
+  color: var(--red);
+  font-weight: 600;
+}
+.card-actions .danger:hover:not(:disabled) {
+  background: var(--red);
+  color: #ffffff;
+  border-color: var(--red);
+}
+
+/* Session / worklog editor area — always stacked at this viewport. */
+.split {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.editor-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.editor-column textarea {
+  min-height: 100px;
+}
+
+.editor-column textarea[readonly] {
+  background: rgba(255, 253, 248, 0.55);
+  /* Structured markdown is Korean-heavy — use Noto's monospace member so
+     CJK glyph width + line-height match the body text visually. */
+  font-family:
+    "Noto Sans Mono CJK KR", "Noto Sans Mono",
+    "D2Coding", "NanumGothicCoding",
+    "Consolas", "Menlo",
+    monospace;
+  font-size: 12px;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+textarea,
+input {
+  width: 100%;
+  max-width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+  color: var(--ink);
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.list-entry {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+  padding: 8px;
+  font-size: 12px;
+}
+
+.list-entry .card-actions {
+  margin-top: 6px;
+}
+
+/* Command bar sticks to the viewport bottom so the user can always send,
+   even after scrolling a long item list. */
+.command-bar {
+  position: sticky;
+  bottom: 0;
+  border-top: 1px solid var(--line);
+  padding: 8px 12px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  background: rgba(247, 244, 237, 0.96);
+  backdrop-filter: blur(6px);
+  margin-top: auto;
+}
+
+.command-bar textarea {
+  min-height: 36px;
+  max-height: 100px;
+  resize: vertical;
+}
+
+.command-bar button {
+  min-height: 36px;
+  padding: 0 14px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Modal dialog — used by the session picker. Scrim + centred card. The
+   whole dialog is constrained to 90vw/80vh so it fits inside the 600x400
+   pywebview window. */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 37, 40, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 16px;
+}
+
+.modal-card {
+  width: min(90vw, 520px);
+  max-height: 80vh;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.modal-head h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.modal-close {
+  min-height: 26px;
+  min-width: 26px;
+  padding: 0 8px;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.modal-card .list {
+  overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.modal-card .list-entry {
+  cursor: pointer;
+  transition: border-color 100ms ease, background 100ms ease;
+}
+
+.modal-card .list-entry:hover {
+  border-color: var(--blue);
+  background: rgba(47, 111, 166, 0.06);
+}

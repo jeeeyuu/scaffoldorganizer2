@@ -1,0 +1,18 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: scaffold-organizer-2-backend
+    ports:
+      - "8765:8765"
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+    volumes:
+      - ./config:/app/config
+      - ./data:/app/data
+      - ./exports:/app/exports
+      - ./logs:/app/logs
+    restart: unless-stopped
+

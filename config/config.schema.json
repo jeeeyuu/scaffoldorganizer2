@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "scaffold-organizer-2-config",
+  "type": "object",
+  "required": ["app_name", "backend_host", "backend_port", "db_path", "ai_roles"],
+  "additionalProperties": true,
+  "properties": {
+    "app_name": {"type": "string", "minLength": 1},
+    "backend_host": {"type": "string"},
+    "backend_port": {"type": "integer", "minimum": 1, "maximum": 65535},
+    "debug": {"type": "boolean"},
+
+    "db_path": {"type": "string"},
+    "export_dir": {"type": "string"},
+    "markdown_export_dir": {"type": "string"},
+    "worklog_export_dir": {"type": "string"},
+    "session_export_dir": {"type": "string"},
+    "log_dir": {"type": "string"},
+
+    "telegram_enabled": {"type": "boolean"},
+    "telegram_bot_token": {"type": "string"},
+    "telegram_allowed_chat_ids": {"type": "array", "items": {"type": "integer"}},
+    "telegram_poll_interval_seconds": {"type": "number", "minimum": 0.2},
+
+    "openai_api_key": {"type": "string"},
+
+    "ai_roles": {
+      "type": "object",
+      "required": ["command_router", "classifier", "task_structurer", "worklog_writer"],
+      "additionalProperties": {"$ref": "#/$defs/ai_role"},
+      "properties": {
+        "command_router":  {"$ref": "#/$defs/ai_role"},
+        "classifier":      {"$ref": "#/$defs/ai_role"},
+        "task_structurer": {"$ref": "#/$defs/ai_role"},
+        "worklog_writer":  {"$ref": "#/$defs/ai_role"}
+      }
+    },
+
+    "wsl_backend_entrypoint": {"type": "string"},
+    "wsl_distribution_name": {"type": "string"},
+
+    "ui_refresh_interval_ms": {"type": "integer", "minimum": 500},
+
+    "pywebview": {
+      "type": "object",
+      "properties": {
+        "width":  {"type": "integer", "minimum": 400},
+        "height": {"type": "integer", "minimum": 300}
+      }
+    }
+  },
+
+  "$defs": {
+    "ai_role": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "prompt_id":        {"type": "string"},
+        "prompt_file":      {"type": "string"},
+        "response_format":  {"type": "string", "enum": ["json", "markdown", "text"]}
+      }
+    }
+  }
+}

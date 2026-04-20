@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ScaffoldOrganizer 2.0</title>
+    <link rel="stylesheet" href="./assets/style.css" />
+  </head>
+  <body>
+    <main class="app-shell" id="appShell">
+      <header class="topbar">
+        <div>
+          <h1>ScaffoldOrganizer 2.0</h1>
+          <p id="feedback" class="feedback">Ready</p>
+        </div>
+        <div class="status-strip">
+          <span id="backendStatus" class="dot active">Backend</span>
+          <span id="telegramStatus" class="dot idle">Telegram</span>
+          <span id="aiStatus" class="dot idle">AI</span>
+        </div>
+      </header>
+
+      <section class="toolbar">
+        <button title="Save the current brain-dump editor as a session" id="saveSession">Save</button>
+        <button title="Load a saved session into the editor" id="loadSession">Load</button>
+        <button title="Reset — wipes ALL items (long-term included) and clears the editor" id="resetApp">Reset</button>
+        <button title="Export all items to markdown file" id="exportMarkdown">Export</button>
+        <button title="Generate a work-log draft for today" id="generateWorklog">Work Log</button>
+      </section>
+
+      <section class="workspace">
+        <nav class="tabs" id="tabs">
+          <button data-tab="inbox" class="active">Inbox</button>
+          <button data-tab="active">Active</button>
+          <button data-tab="longterm">Long-term</button>
+          <button data-tab="sessions">Sessions</button>
+          <button data-tab="worklogs">Work Log</button>
+          <button data-tab="done">Done</button>
+        </nav>
+
+        <section class="panel">
+          <div class="panel-toolbar">
+            <input id="filterInput" type="search" placeholder="Filter items (title, project, tag)…" autocomplete="off" />
+            <span id="itemCount" class="meta"></span>
+          </div>
+          <div id="itemsView" class="item-grid"></div>
+          <div id="sessionView" class="split hidden">
+            <div class="editor-column">
+              <textarea id="brainDump" placeholder="Brain dump — click a saved session to load its raw text here."></textarea>
+              <textarea id="structuredOutput" placeholder="Structured markdown will appear here after 'Structure Brain Dump'." readonly></textarea>
+            </div>
+            <div class="stack">
+              <input id="sessionTitle" placeholder="Session title" />
+              <button id="structureBrainDump">
+                <span class="btn-label">Structure Brain Dump</span>
+                <span class="spinner" aria-hidden="true"></span>
+              </button>
+              <div id="sessionsList" class="list"></div>
+            </div>
+          </div>
+          <div id="worklogView" class="split hidden">
+            <div class="editor-column">
+              <textarea id="worklogDraft" placeholder="Click 'Work Log' in the toolbar to generate a draft. Review / edit it here, then Save or Save&amp;Export."></textarea>
+              <div class="card-actions">
+                <button id="saveWorklog">Save</button>
+                <button id="exportWorklog">Save &amp; Export</button>
+                <span id="worklogStatus" class="meta"></span>
+              </div>
+            </div>
+            <div id="worklogsList" class="list"></div>
+          </div>
+        </section>
+      </section>
+
+      <footer class="command-bar">
+        <textarea id="commandInput" placeholder="Capture a thought, create a task, or issue a command. (Ctrl/Cmd+Enter to send)"></textarea>
+        <button id="sendCommand">
+          <span class="btn-label">Send</span>
+          <span class="spinner" aria-hidden="true"></span>
+        </button>
+      </footer>
+    </main>
+    <div id="sessionPicker" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="sessionPickerTitle">
+      <div class="modal-card">
+        <header class="modal-head">
+          <h2 id="sessionPickerTitle">Load Session</h2>
+          <button class="modal-close" id="sessionPickerClose" aria-label="Close">×</button>
+        </header>
+        <p class="meta" id="sessionPickerHint">Click an entry to restore raw + structured text into the editor.</p>
+        <div id="sessionPickerList" class="list"></div>
+      </div>
+    </div>
+    <script src="./assets/app.js"></script>
+  </body>
+</html>
+

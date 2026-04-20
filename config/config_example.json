@@ -1,0 +1,52 @@
+{
+  "app_name": "ScaffoldOrganizer 2.0",
+  "backend_host": "127.0.0.1",
+  "backend_port": 8765,
+  "debug": false,
+  "db_path": "data/scaffold_workbench.sqlite3",
+  "export_dir": "exports",
+  "markdown_export_dir": "exports/markdown",
+  "worklog_export_dir": "exports/worklogs",
+  "session_export_dir": "exports/sessions",
+  "log_dir": "logs",
+
+  "telegram_enabled": false,
+  "telegram_bot_token": "",
+  "telegram_allowed_chat_ids": [],
+  "telegram_poll_interval_seconds": 1.0,
+
+  "openai_api_key": "",
+
+  "ai_roles": {
+    "command_router": {
+      "prompt_id": "pmpt_REPLACE_ME",
+      "prompt_file": "backend/prompts/command_router.md",
+      "response_format": "json"
+    },
+    "classifier": {
+      "prompt_id": "pmpt_REPLACE_ME",
+      "prompt_file": "backend/prompts/classifier.md",
+      "response_format": "json"
+    },
+    "task_structurer": {
+      "prompt_id": "pmpt_REPLACE_ME",
+      "prompt_file": "backend/prompts/task_structurer.md",
+      "response_format": "json"
+    },
+    "worklog_writer": {
+      "prompt_id": "pmpt_REPLACE_ME",
+      "prompt_file": "backend/prompts/worklog_writer.md",
+      "response_format": "json"
+    }
+  },
+
+  "wsl_backend_entrypoint": "/home/YOUR_USER/personal/260420_scaffold_assistant_2/developing",
+  "wsl_distribution_name": "",
+
+  "ui_refresh_interval_ms": 2000,
+
+  "pywebview": {
+    "width": 600,
+    "height": 400
+  }
+}

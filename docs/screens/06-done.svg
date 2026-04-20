@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="600" height="400" role="img" aria-label="ScaffoldOrganizer 2.0 — Done tab">
+  <defs>
+    <linearGradient id="bgA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#26835b" stop-opacity="0.11"/><stop offset="0.35" stop-color="#26835b" stop-opacity="0"/></linearGradient>
+    <linearGradient id="bgB" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f6fa6" stop-opacity="0.12"/><stop offset="0.38" stop-color="#2f6fa6" stop-opacity="0"/></linearGradient>
+    <style><![CDATA[
+      text { font-family: "Noto Sans KR", "Noto Sans", "Malgun Gothic", sans-serif; fill: #1e2528; }
+      .tab { font-size: 10px; } .tab-active { font-size: 10px; fill: #2f6fa6; font-weight: 700; }
+      .title { font-size: 11.5px; font-weight: 700; fill: #667277; }
+      .body { font-size: 10px; fill: #667277; } .btn { font-size: 9.5px; }
+      .dot-label { font-size: 9px; } .h1 { font-size: 16px; font-weight: 800; letter-spacing: -0.01em; }
+      .feedback { font-size: 10px; fill: #667277; }
+      .cmd-placeholder { font-size: 11px; fill: #667277; font-style: italic; }
+      .count { font-size: 10px; fill: #667277; }
+      .chip { font-size: 8.5px; font-weight: 700; fill: #ffffff; }
+    ]]></style>
+  </defs>
+
+  <rect width="600" height="400" fill="#f7f4ed"/><rect width="600" height="400" fill="url(#bgA)"/><rect width="600" height="400" fill="url(#bgB)"/>
+
+  <g transform="translate(12, 14)">
+    <text class="h1" y="14">ScaffoldOrganizer 2.0</text>
+    <text class="feedback" y="30">Ready</text>
+    <g transform="translate(372, 2)">
+      <rect x="0"   y="0" rx="9" ry="9" width="62" height="17" fill="#fffdf8" stroke="#d9d1c3"/><circle cx="9"   cy="8.5" r="3" fill="#26835b"/><text class="dot-label" x="17"  y="12" fill="#26835b">Backend</text>
+      <rect x="66"  y="0" rx="9" ry="9" width="62" height="17" fill="#fffdf8" stroke="#d9d1c3"/><circle cx="75"  cy="8.5" r="3" fill="#26835b"/><text class="dot-label" x="83"  y="12" fill="#26835b">Telegram</text>
+      <rect x="132" y="0" rx="9" ry="9" width="38" height="17" fill="#fffdf8" stroke="#d9d1c3"/><circle cx="141" cy="8.5" r="3" fill="#26835b"/><text class="dot-label" x="149" y="12" fill="#26835b">AI</text>
+    </g>
+  </g>
+
+  <g transform="translate(12, 52)">
+    <rect x="0"   y="0" rx="4" ry="4" width="40" height="22" fill="#fffdf8" stroke="#d9d1c3"/><text class="btn" x="20" y="15" text-anchor="middle">Save</text>
+    <rect x="44"  y="0" rx="4" ry="4" width="40" height="22" fill="#fffdf8" stroke="#d9d1c3"/><text class="btn" x="64" y="15" text-anchor="middle">Load</text>
+    <rect x="88"  y="0" rx="4" ry="4" width="44" height="22" fill="#fffdf8" stroke="#d9d1c3"/><text class="btn" x="110" y="15" text-anchor="middle">Reset</text>
+    <rect x="136" y="0" rx="4" ry="4" width="48" height="22" fill="#fffdf8" stroke="#d9d1c3"/><text class="btn" x="160" y="15" text-anchor="middle">Export</text>
+    <rect x="188" y="0" rx="4" ry="4" width="64" height="22" fill="#fffdf8" stroke="#d9d1c3"/><text class="btn" x="220" y="15" text-anchor="middle">Work Log</text>
+  </g>
+
+  <g transform="translate(12, 82)">
+    <rect x="0"   y="0" rx="4" ry="4" width="44" height="20" fill="#fffdf8" stroke="#d9d1c3"/><text class="tab" x="22"  y="13.5" text-anchor="middle">Inbox</text>
+    <rect x="48"  y="0" rx="4" ry="4" width="44" height="20" fill="#fffdf8" stroke="#d9d1c3"/><text class="tab" x="70"  y="13.5" text-anchor="middle">Active</text>
+    <rect x="96"  y="0" rx="4" ry="4" width="66" height="20" fill="#fffdf8" stroke="#d9d1c3"/><text class="tab" x="129" y="13.5" text-anchor="middle">Long-term</text>
+    <rect x="166" y="0" rx="4" ry="4" width="58" height="20" fill="#fffdf8" stroke="#d9d1c3"/><text class="tab" x="195" y="13.5" text-anchor="middle">Sessions</text>
+    <rect x="228" y="0" rx="4" ry="4" width="58" height="20" fill="#fffdf8" stroke="#d9d1c3"/><text class="tab" x="257" y="13.5" text-anchor="middle">Work Log</text>
+    <rect x="290" y="0" rx="4" ry="4" width="44" height="20" fill="#fffdf8" stroke="#2f6fa6"/><text class="tab-active" x="312" y="13.5" text-anchor="middle">Done</text>
+  </g>
+
+  <g transform="translate(12, 110)">
+    <rect x="0" y="0" rx="6" ry="6" width="576" height="220" fill="rgba(255,253,248,0.82)" stroke="#d9d1c3"/>
+    <rect x="10" y="10" rx="4" ry="4" width="380" height="20" fill="#fffdf8" stroke="#d9d1c3"/>
+    <text class="body" x="18" y="24">Filter items (title, project, tag)…</text>
+    <text class="count" x="566" y="24" text-anchor="end">오늘 완료 4건</text>
+
+    <!-- Done cards: muted border-left + opacity 0.72 effect -->
+    <g transform="translate(10, 40)" opacity="0.72">
+      <rect x="0" y="0" rx="6" ry="6" width="272" height="78" fill="#fffdf8" stroke="#d9d1c3"/>
+      <rect x="0" y="0" width="4" height="78" fill="#667277"/>
+      <rect x="12" y="10" width="11" height="11" rx="2" fill="#fffdf8" stroke="#d9d1c3"/>
+      <text class="title" x="28" y="19" text-decoration="line-through">SQLite schema 마이그레이션 적용</text>
+      <rect x="238" y="8" rx="9" ry="9" width="26" height="13" fill="#b97118"/>
+      <text class="chip" x="251" y="17" text-anchor="middle">P2</text>
+      <text class="body" x="12" y="35">WAL 모드 + completed_at 인덱스 추가.</text>
+      <text class="body" x="12" y="47">✓ 2026-04-20 14:02 완료</text>
+      <g transform="translate(10, 56)">
+        <rect x="0" y="0" rx="3" ry="3" width="18" height="16" fill="#fffdf8" stroke="#d9d1c3"/><text class="btn" x="9" y="11" text-anchor="middle">🗑</text>
+        <rect x="240" y="0" rx="3" ry="3" width="18" height="16" fill="#fffdf8" stroke="#d9d1c3"/><text class="btn" x="249" y="11" text-anchor="middle">✎</text>
+      </g>
+    </g>
+
+    <g transform="translate(294, 40)" opacity="0.72">
+      <rect x="0" y="0" rx="6" ry="6" width="272" height="78" fill="#fffdf8" stroke="#d9d1c3"/>
+      <rect x="0" y="0" width="4" height="78" fill="#667277"/>
+      <rect x="12" y="10" width="11" height="11" rx="2" fill="#fffdf8" stroke="#d9d1c3"/>
+      <text class="title" x="28" y="19" text-decoration="line-through">worklog writer 프롬프트 JSON 전환</text>
+      <rect x="238" y="8" rx="9" ry="9" width="26" height="13" fill="#2f6fa6"/>
+      <text class="chip" x="251" y="17" text-anchor="middle">P3</text>
+      <text class="body" x="12" y="35">대시보드 + 로컬 .md 동시 업데이트.</text>
+      <text class="body" x="12" y="47">✓ 2026-04-20 15:38 완료</text>
+      <g transform="translate(10, 56)">
+        <rect x="0" y="0" rx="3" ry="3" width="18" height="16" fill="#fffdf8" stroke="#d9d1c3"/><text class="btn" x="9" y="11" text-anchor="middle">🗑</text>
+        <rect x="240" y="0" rx="3" ry="3" width="18" height="16" fill="#fffdf8" stroke="#d9d1c3"/><text class="btn" x="249" y="11" text-anchor="middle">✎</text>
+      </g>
+    </g>
+
+    <g transform="translate(10, 124)" opacity="0.72">
+      <rect x="0" y="0" rx="6" ry="6" width="272" height="78" fill="#fffdf8" stroke="#d9d1c3"/>
+      <rect x="0" y="0" width="4" height="78" fill="#667277"/>
+      <rect x="12" y="10" width="11" height="11" rx="2" fill="#fffdf8" stroke="#d9d1c3"/>
+      <text class="title" x="28" y="19" text-decoration="line-through">README 구조 리팩토링</text>
+      <rect x="238" y="8" rx="9" ry="9" width="26" height="13" fill="#2f6fa6"/>
+      <text class="chip" x="251" y="17" text-anchor="middle">P3</text>
+      <text class="body" x="12" y="35">빌드/실행/사용 섹션 전부 업데이트.</text>
+      <text class="body" x="12" y="47">✓ 2026-04-20 16:45 완료</text>
+      <g transform="translate(10, 56)">
+        <rect x="0" y="0" rx="3" ry="3" width="18" height="16" fill="#fffdf8" stroke="#d9d1c3"/><text class="btn" x="9" y="11" text-anchor="middle">🗑</text>
+        <rect x="240" y="0" rx="3" ry="3" width="18" height="16" fill="#fffdf8" stroke="#d9d1c3"/><text class="btn" x="249" y="11" text-anchor="middle">✎</text>
+      </g>
+    </g>
+
+    <g transform="translate(294, 124)" opacity="0.72">
+      <rect x="0" y="0" rx="6" ry="6" width="272" height="78" fill="#fffdf8" stroke="#d9d1c3"/>
+      <rect x="0" y="0" width="4" height="78" fill="#667277"/>
+      <rect x="12" y="10" width="11" height="11" rx="2" fill="#fffdf8" stroke="#d9d1c3"/>
+      <text class="title" x="28" y="19" text-decoration="line-through">Telegram allowlist 로그 강화</text>
+      <rect x="238" y="8" rx="9" ry="9" width="26" height="13" fill="#b97118"/>
+      <text class="chip" x="251" y="17" text-anchor="middle">P2</text>
+      <text class="body" x="12" y="35">drop 시 chat_id / title 로깅.</text>
+      <text class="body" x="12" y="47">✓ 2026-04-20 17:02 완료</text>
+      <g transform="translate(10, 56)">
+        <rect x="0" y="0" rx="3" ry="3" width="18" height="16" fill="#fffdf8" stroke="#d9d1c3"/><text class="btn" x="9" y="11" text-anchor="middle">🗑</text>
+        <rect x="240" y="0" rx="3" ry="3" width="18" height="16" fill="#fffdf8" stroke="#d9d1c3"/><text class="btn" x="249" y="11" text-anchor="middle">✎</text>
+      </g>
+    </g>
+  </g>
+
+  <g transform="translate(0, 340)">
+    <rect x="0" y="0" width="600" height="60" fill="rgba(247,244,237,0.96)"/>
+    <line x1="0" y1="0" x2="600" y2="0" stroke="#d9d1c3"/>
+    <rect x="12" y="10" rx="5" ry="5" width="490" height="40" fill="#fffdf8" stroke="#d9d1c3"/>
+    <text class="cmd-placeholder" x="22" y="34">오늘 완료한 거 기준으로 업무일지 만들어줘</text>
+    <rect x="510" y="10" rx="5" ry="5" width="78" height="40" fill="#fffdf8" stroke="#2f6fa6"/>
+    <text class="btn" x="549" y="35" text-anchor="middle" fill="#2f6fa6" font-weight="700">Send</text>
+  </g>
+</svg>

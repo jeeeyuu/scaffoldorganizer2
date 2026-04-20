@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="600" height="400" role="img" aria-label="ScaffoldOrganizer 2.0 — Work Log draft">
+  <defs>
+    <linearGradient id="bgA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#26835b" stop-opacity="0.11"/><stop offset="0.35" stop-color="#26835b" stop-opacity="0"/></linearGradient>
+    <linearGradient id="bgB" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f6fa6" stop-opacity="0.12"/><stop offset="0.38" stop-color="#2f6fa6" stop-opacity="0"/></linearGradient>
+    <style><![CDATA[
+      text { font-family: "Noto Sans KR", "Noto Sans", "Malgun Gothic", sans-serif; fill: #1e2528; }
+      .tab { font-size: 10px; } .tab-active { font-size: 10px; fill: #2f6fa6; font-weight: 700; }
+      .body { font-size: 10px; fill: #667277; } .btn { font-size: 9.5px; }
+      .dot-label { font-size: 9px; } .h1 { font-size: 16px; font-weight: 800; letter-spacing: -0.01em; }
+      .feedback { font-size: 10px; fill: #26835b; font-weight: 600; }
+      .cmd-placeholder { font-size: 11px; fill: #667277; font-style: italic; }
+      .mono { font-family: "Noto Sans Mono CJK KR", "Consolas", monospace; font-size: 9.5px; fill: #1e2528; }
+      .muted10 { font-size: 10px; fill: #667277; }
+      .list-title { font-size: 10.5px; font-weight: 700; }
+      .list-meta { font-size: 9.5px; fill: #667277; }
+      .status-label { font-size: 9.5px; fill: #667277; }
+    ]]></style>
+  </defs>
+
+  <rect width="600" height="400" fill="#f7f4ed"/><rect width="600" height="400" fill="url(#bgA)"/><rect width="600" height="400" fill="url(#bgB)"/>
+
+  <g transform="translate(12, 14)">
+    <text class="h1" y="14">ScaffoldOrganizer 2.0</text>
+    <text class="feedback" y="30">Draft ready — review, then Save or Save &amp; Export</text>
+    <g transform="translate(372, 2)">
+      <rect x="0"   y="0" rx="9" ry="9" width="62" height="17" fill="#fffdf8" stroke="#d9d1c3"/><circle cx="9"   cy="8.5" r="3" fill="#26835b"/><text class="dot-label" x="17"  y="12" fill="#26835b">Backend</text>
+      <rect x="66"  y="0" rx="9" ry="9" width="62" height="17" fill="#fffdf8" stroke="#d9d1c3"/><circle cx="75"  cy="8.5" r="3" fill="#26835b"/><text class="dot-label" x="83"  y="12" fill="#26835b">Telegram</text>
+      <rect x="132" y="0" rx="9" ry="9" width="38" height="17" fill="#fffdf8" stroke="#d9d1c3"/><circle cx="141" cy="8.5" r="3" fill="#26835b"/><text class="dot-label" x="149" y="12" fill="#26835b">AI</text>
+    </g>
+  </g>
+
+  <g transform="translate(12, 52)">
+    <rect x="0"   y="0" rx="4" ry="4" width="40" height="22" fill="#fffdf8" stroke="#d9d1c3"/><text class="btn" x="20" y="15" text-anchor="middle">Save</text>
+    <rect x="44"  y="0" rx="4" ry="4" width="40" height="22" fill="#fffdf8" stroke="#d9d1c3"/><text class="btn" x="64" y="15" text-anchor="middle">Load</text>
+    <rect x="88"  y="0" rx="4" ry="4" width="44" height="22" fill="#fffdf8" stroke="#d9d1c3"/><text class="btn" x="110" y="15" text-anchor="middle">Reset</text>
+    <rect x="136" y="0" rx="4" ry="4" width="48" height="22" fill="#fffdf8" stroke="#d9d1c3"/><text class="btn" x="160" y="15" text-anchor="middle">Export</text>
+    <rect x="188" y="0" rx="4" ry="4" width="64" height="22" fill="#fffdf8" stroke="#2f6fa6"/><text class="btn" x="220" y="15" text-anchor="middle" fill="#2f6fa6" font-weight="700">Work Log</text>
+  </g>
+
+  <g transform="translate(12, 82)">
+    <rect x="0"   y="0" rx="4" ry="4" width="44" height="20" fill="#fffdf8" stroke="#d9d1c3"/><text class="tab" x="22"  y="13.5" text-anchor="middle">Inbox</text>
+    <rect x="48"  y="0" rx="4" ry="4" width="44" height="20" fill="#fffdf8" stroke="#d9d1c3"/><text class="tab" x="70"  y="13.5" text-anchor="middle">Active</text>
+    <rect x="96"  y="0" rx="4" ry="4" width="66" height="20" fill="#fffdf8" stroke="#d9d1c3"/><text class="tab" x="129" y="13.5" text-anchor="middle">Long-term</text>
+    <rect x="166" y="0" rx="4" ry="4" width="58" height="20" fill="#fffdf8" stroke="#d9d1c3"/><text class="tab" x="195" y="13.5" text-anchor="middle">Sessions</text>
+    <rect x="228" y="0" rx="4" ry="4" width="58" height="20" fill="#fffdf8" stroke="#2f6fa6"/><text class="tab-active" x="257" y="13.5" text-anchor="middle">Work Log</text>
+    <rect x="290" y="0" rx="4" ry="4" width="44" height="20" fill="#fffdf8" stroke="#d9d1c3"/><text class="tab" x="312" y="13.5" text-anchor="middle">Done</text>
+  </g>
+
+  <!-- Panel: worklog draft + history -->
+  <g transform="translate(12, 110)">
+    <rect x="0" y="0" rx="6" ry="6" width="576" height="220" fill="rgba(255,253,248,0.82)" stroke="#d9d1c3"/>
+
+    <!-- Left: editable draft -->
+    <g transform="translate(10, 10)">
+      <rect x="0" y="0" rx="4" ry="4" width="346" height="172" fill="#fffdf8" stroke="#d9d1c3"/>
+      <text class="muted10" x="8" y="12">Work log draft (editable Markdown)</text>
+      <text class="mono" x="8" y="28" font-weight="700">📅 업무일지 — 2026-04-20</text>
+      <text class="mono" x="8" y="44">## 1. 🟢 오늘 착수한 작업</text>
+      <text class="mono" x="8" y="58">- 농진청 데이터 컬럼 정의 확정</text>
+      <text class="mono" x="8" y="72">- preprocessing pipeline 초안 설계</text>
+      <text class="mono" x="8" y="88">## 2. 🔵 진행 중인 작업</text>
+      <text class="mono" x="8" y="102">- alignment benchmark 재검토</text>
+      <text class="mono" x="8" y="118">## 3. ✅ 완료한 작업</text>
+      <text class="mono" x="8" y="132">- SQLite schema 마이그레이션</text>
+      <text class="mono" x="8" y="146">## 7. ▶️ 다음 액션</text>
+      <text class="mono" x="8" y="160">- P1 foundation model 스펙 문서화</text>
+
+      <!-- Draft action row -->
+      <g transform="translate(0, 180)">
+        <rect x="0"  y="0" rx="4" ry="4" width="44" height="20" fill="#fffdf8" stroke="#d9d1c3"/><text class="btn" x="22" y="13.5" text-anchor="middle">Save</text>
+        <rect x="48" y="0" rx="4" ry="4" width="88" height="20" fill="#fffdf8" stroke="#2f6fa6"/><text class="btn" x="92" y="13.5" text-anchor="middle" fill="#2f6fa6" font-weight="700">Save &amp; Export</text>
+        <text class="status-label" x="146" y="14">Draft — not saved</text>
+      </g>
+    </g>
+
+    <!-- Right: worklog history -->
+    <g transform="translate(366, 10)">
+      <rect x="0" y="0" rx="4" ry="4" width="200" height="34" fill="#fffdf8" stroke="#d9d1c3"/>
+      <text class="list-title" x="8" y="14">Work Log 2026-04-20</text>
+      <text class="list-meta" x="8" y="26">(unsaved draft)</text>
+
+      <rect x="0" y="38" rx="4" ry="4" width="200" height="34" fill="#fffdf8" stroke="#d9d1c3"/>
+      <text class="list-title" x="8" y="52">Work Log 2026-04-19</text>
+      <text class="list-meta" x="8" y="64">#34 · 2026-04-19T18:04</text>
+
+      <rect x="0" y="76" rx="4" ry="4" width="200" height="34" fill="#fffdf8" stroke="#d9d1c3"/>
+      <text class="list-title" x="8" y="90">Work Log 2026-04-18</text>
+      <text class="list-meta" x="8" y="102">#33 · 2026-04-18T19:20</text>
+
+      <rect x="0" y="114" rx="4" ry="4" width="200" height="34" fill="#fffdf8" stroke="#d9d1c3"/>
+      <text class="list-title" x="8" y="128">Work Log 2026-04-17</text>
+      <text class="list-meta" x="8" y="140">#32 · 2026-04-17T17:55</text>
+
+      <text class="list-meta" x="100" y="165" text-anchor="middle">클릭해 draft 영역에 불러오기</text>
+    </g>
+  </g>
+
+  <g transform="translate(0, 340)">
+    <rect x="0" y="0" width="600" height="60" fill="rgba(247,244,237,0.96)"/>
+    <line x1="0" y1="0" x2="600" y2="0" stroke="#d9d1c3"/>
+    <rect x="12" y="10" rx="5" ry="5" width="490" height="40" fill="#fffdf8" stroke="#d9d1c3"/>
+    <text class="cmd-placeholder" x="22" y="34">오늘 기준으로 업무일지 다시 만들어줘</text>
+    <rect x="510" y="10" rx="5" ry="5" width="78" height="40" fill="#fffdf8" stroke="#2f6fa6"/>
+    <text class="btn" x="549" y="35" text-anchor="middle" fill="#2f6fa6" font-weight="700">Send</text>
+  </g>
+</svg>
