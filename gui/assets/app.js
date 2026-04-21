@@ -186,10 +186,16 @@ function renderItemViewMode(item, priority) {
   const content = item.content && item.content !== item.title
     ? `<p class="card-body">${escapeHtml(item.content)}</p>`
     : "";
+  // Doing items get a loud "DOING" pill in the header so the active
+  // state is unmistakable next to a sea of todo cards on the same tab.
+  const doingPill = item.status === "doing"
+    ? `<span class="status-pill" title="진행 중">DOING</span>`
+    : "";
   return `
     <header class="card-head">
       <input type="checkbox" data-select="${item.id}" ${checked} />
       <h3 title="#${item.id} · ${escapeHtml(item.item_type)} · ${escapeHtml(item.horizon)}">${escapeHtml(item.title)}</h3>
+      ${doingPill}
       <span class="priority-chip p${priority}" title="${priorityLabel(priority)}">P${priority}</span>
     </header>
     ${content}

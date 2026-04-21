@@ -271,10 +271,17 @@ h1 {
 
 .item-card.status-inbox    { border-left-color: var(--amber); }
 .item-card.status-todo     { border-left-color: var(--blue); }
+
+/* Doing — same border thickness as the other states; what changes is the
+   colour (deep mustard, distinct from both inbox amber and todo blue) and
+   a subtle yellow-tinted shadow. The DOING badge in the header carries
+   the loud explicit signal; the card itself stays calm. */
 .item-card.status-doing {
-  border-left-color: var(--green);
-  box-shadow: 0 4px 14px rgba(38, 131, 91, 0.16);
+  border-left-color: #b8860b;
+  box-shadow: 0 3px 10px rgba(184, 134, 11, 0.20);
 }
+.item-card.status-doing h3 { font-weight: 800; }
+
 .item-card.status-done {
   border-left-color: var(--muted);
   opacity: 0.72;
@@ -282,6 +289,26 @@ h1 {
 .item-card.status-archived {
   border-left-color: var(--line);
   opacity: 0.55;
+}
+
+/* Small explicit "● DOING" pill so the state isn't left purely to colour. */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  background: var(--green);
+  color: #ffffff;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.status-pill::before {
+  content: "●";
+  font-size: 8px;
 }
 
 /* Priority chip — prominent coloured badge at the card meta row. Pairs
