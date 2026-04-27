@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import html
 import logging
 import threading
 import time
@@ -22,6 +23,26 @@ log = logging.getLogger(__name__)
 _SKIP_LLM_LEN = 40
 _BACKOFF_CAP_SECONDS = 300.0
 
+# Commands registered with BotFather's setMyCommands so Telegram clients
+# show them as autocomplete choices when the user types "/".
+_BOT_COMMANDS = [
+    {"command": "start",  "description": "봇 소개"},
+    {"command": "help",   "description": "사용법 / 명령어 목록"},
+    {"command": "stats",  "description": "Inbox / Active / Doing 현재 개수"},
+    {"command": "list",   "description": "최근 Inbox 5개"},
+    {"command": "whoami", "description": "내 chat_id 보기 (allowlist 추가용)"},
+]
+
+_HELP_TEXT = (
+    "이 봇에 그냥 메시지를 보내면 앱 Inbox 에 자동 캡처됩니다. "
+    "긴 브레인덤프는 여러 item 으로 분해됩니다.\n\n"
+    "<b>명령어</b>\n"
+    "/help   — 이 도움말\n"
+    "/stats  — Inbox / Active / Doing 개수\n"
+    "/list   — 최근 Inbox 5개\n"
+    "/whoami — 내 chat_id (allowlist 설정용)"
+)
+
 
 class TelegramPollingService:
     """Polling worker that lives only while the backend process is running."""
@@ -32,6 +53,7 @@ class TelegramPollingService:
         self._running = False
         self._thread: threading.Thread | None = None
         self.last_error = ""
+        self._commands_registered = False
 
     @property
     def active(self) -> bool:
@@ -50,6 +72,7 @@ class TelegramPollingService:
                 "telegram polling start — telegram_allowed_chat_ids is EMPTY, "
                 "all incoming chats will be accepted. Populate the list in config.json to restrict."
             )
+        self._register_bot_commands()
         self._running = True
         self._thread = threading.Thread(target=self._poll, name="telegram-polling", daemon=True)
         self._thread.start()
@@ -59,8 +82,50 @@ class TelegramPollingService:
         if self._thread:
             self._thread.join(timeout=5)
 
+    # ---------------------------------------------------------------- HTTP
+
     def _url(self, method: str) -> str:
         return f"https://api.telegram.org/bot{self.config.telegram_bot_token}/{method}"
+
+    def _send_message(self, chat_id: int, text: str, *, parse_mode: str | None = "HTML") -> None:
+        """Send a reply. Failures are logged but don't stop polling — the
+        user still gets their item captured, they just miss the ack."""
+        try:
+            payload: dict[str, Any] = {
+                "chat_id": chat_id,
+                "text": text,
+                "disable_web_page_preview": True,
+            }
+            if parse_mode:
+                payload["parse_mode"] = parse_mode
+            resp = requests.post(self._url("sendMessage"), json=payload, timeout=10)
+            if not resp.ok:
+                log.warning("sendMessage %d failed: %s", resp.status_code, resp.text[:200])
+        except Exception as exc:  # noqa: BLE001
+            log.warning("sendMessage exception: %s", exc)
+
+    def _register_bot_commands(self) -> None:
+        """Register the / command autocomplete list with Telegram.
+
+        Clients only refresh this list occasionally, so changes can take a
+        minute to propagate on the user side. We call it once per process
+        start; failures are non-fatal (the bot still works without
+        autocomplete)."""
+        try:
+            resp = requests.post(
+                self._url("setMyCommands"),
+                json={"commands": _BOT_COMMANDS},
+                timeout=5,
+            )
+            if resp.ok:
+                self._commands_registered = True
+                log.info("telegram: registered %d bot commands", len(_BOT_COMMANDS))
+            else:
+                log.warning("setMyCommands %d: %s", resp.status_code, resp.text[:200])
+        except Exception as exc:  # noqa: BLE001
+            log.warning("setMyCommands exception: %s", exc)
+
+    # -------------------------------------------------------------- polling
 
     def _load_offset(self) -> int:
         with connect(self.config) as conn:
@@ -103,6 +168,8 @@ class TelegramPollingService:
                 time.sleep(backoff)
                 backoff = min(backoff * 2, _BACKOFF_CAP_SECONDS)
 
+    # ---------------------------------------------------------- update flow
+
     def _handle_update(self, update: dict[str, Any]) -> None:
         message = update.get("message") or {}
         chat = message.get("chat", {})
@@ -110,30 +177,91 @@ class TelegramPollingService:
         if chat_id is None:
             return
         chat_id_int = int(chat_id)
+        text = str(message.get("text") or "").strip()
+        if not text:
+            return
 
-        # Authorization: drop anything not on the allowlist BEFORE any AI
-        # call or DB write. This is the single choke point for incoming
-        # Telegram traffic — keep it at the top of the handler and leave a
-        # log trail so the user can audit dropped messages and discover the
-        # chat_id they need to add.
+        is_command = text.startswith("/")
+        cmd = text.split()[0].split("@")[0].lower() if is_command else ""
+
+        # /whoami bypasses the allowlist — its whole purpose is to let the
+        # user discover the chat_id they need to add to the allowlist in
+        # the first place. Every other command still requires authorization.
+        if cmd == "/whoami":
+            self._send_message(
+                chat_id_int,
+                f"Chat ID: <code>{chat_id_int}</code>\n"
+                f"allowlist 에 추가: <code>[{chat_id_int}]</code>",
+            )
+            return
+
+        # Authorization choke point. Non-allowlisted chats get dropped here
+        # before any AI call or DB write. A single log line per drop lets
+        # the user audit and populate the list.
         allowed = self.config.telegram_allowed_chat_ids
         if allowed and chat_id_int not in allowed:
             log.warning(
-                "telegram: dropped message from unauthorized chat_id=%s (title=%r, username=%r) — add to telegram_allowed_chat_ids to accept",
+                "telegram: dropped message from unauthorized chat_id=%s (title=%r, username=%r)",
                 chat_id_int,
                 chat.get("title"),
                 chat.get("username") or chat.get("first_name"),
             )
             return
 
-        text = str(message.get("text") or "").strip()
-        if not text:
-            return
+        if is_command:
+            self._handle_command(chat_id_int, cmd)
+        else:
+            self._capture_text(chat_id_int, text, update.get("update_id"))
 
+    # ------------------------------------------------------------- commands
+
+    def _handle_command(self, chat_id: int, cmd: str) -> None:
+        if cmd == "/start":
+            self._send_message(
+                chat_id,
+                "ScaffoldOrganizer 2.0 에 연결되었습니다. 메시지를 보내면 Inbox 로 자동 캡처됩니다.\n\n" + _HELP_TEXT,
+            )
+            return
+        if cmd == "/help":
+            self._send_message(chat_id, _HELP_TEXT)
+            return
+        if cmd == "/stats":
+            with connect(self.config) as conn:
+                rows = conn.execute(
+                    "SELECT status, COUNT(*) AS n FROM items "
+                    "WHERE status IN ('inbox','todo','doing') GROUP BY status"
+                ).fetchall()
+            counts = {row["status"]: int(row["n"]) for row in rows}
+            self._send_message(
+                chat_id,
+                f"📊 현재 상태\n"
+                f"Inbox : <b>{counts.get('inbox', 0)}</b>\n"
+                f"Active: <b>{counts.get('todo', 0)}</b>\n"
+                f"Doing : <b>{counts.get('doing', 0)}</b>",
+            )
+            return
+        if cmd == "/list":
+            with connect(self.config) as conn:
+                rows = conn.execute(
+                    "SELECT id, title FROM items WHERE status='inbox' "
+                    "ORDER BY created_at DESC LIMIT 5"
+                ).fetchall()
+            if not rows:
+                self._send_message(chat_id, "Inbox 가 비어있습니다.")
+                return
+            lines = [f"#{row['id']} · {html.escape(str(row['title']))}" for row in rows]
+            self._send_message(chat_id, "<b>최근 Inbox 5개</b>\n" + "\n".join(lines))
+            return
+        self._send_message(chat_id, f"알 수 없는 명령: <code>{html.escape(cmd)}</code>\n/help 를 참고해주세요.")
+
+    # -------------------------------------------------------- text capture
+
+    def _capture_text(self, chat_id: int, text: str, update_id: Any) -> None:
         if len(text) <= _SKIP_LLM_LEN and "\n" not in text:
             classification = _fallback_classify(text)
         else:
             classification = self.ai.classify(text)
+
         with connect(self.config) as conn:
             item = create_item(
                 conn,
@@ -147,8 +275,19 @@ class TelegramPollingService:
                     source="telegram",
                     project=classification.get("project", ""),
                     tags=classification.get("tags", []),
-                    external_ref=str(update.get("update_id")),
+                    external_ref=str(update_id) if update_id is not None else None,
                 ),
             )
-            record_event(conn, "telegram_received", item_id=item["id"], payload={"chat_id": chat_id_int})
+            record_event(conn, "telegram_received", item_id=item["id"], payload={"chat_id": chat_id})
 
+        # Send a short ack so the user knows the capture landed and where
+        # it went. Title is truncated to keep the reply compact.
+        title = html.escape(str(item.get("title") or "")[:60])
+        horizon = str(item.get("horizon", "now"))
+        status = str(item.get("status", "inbox"))
+        priority = int(item.get("priority") or 3)
+        self._send_message(
+            chat_id,
+            f"✅ 저장됨 <b>#{item['id']}</b> · {status} / {horizon} · P{priority}\n"
+            f"<i>{title}</i>",
+        )

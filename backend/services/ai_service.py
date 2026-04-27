@@ -164,6 +164,11 @@ class AIService:
     def _format_worklog_input(context: dict[str, Any]) -> str:
         payload = {
             "date": context.get("log_date") or local_date(),
+            # Explicit window so the writer knows this draft spans "since
+            # last log" rather than always "today". The default window
+            # runs from the previous worklog's creation timestamp to now.
+            "window_start": context.get("window_start"),
+            "window_end": context.get("window_end"),
             "started_tasks": _labels(context.get("started", [])),
             "completed_tasks": _labels(context.get("completed", [])),
             "active_doing_tasks": _labels(context.get("doing", [])),

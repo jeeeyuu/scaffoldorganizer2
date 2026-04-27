@@ -62,6 +62,46 @@ def test_worklog_context(tmp_path: Path) -> None:
     change_status(conn, item["id"], "done")
     context = assemble_worklog_context(conn)
     assert context["completed"]
+    # Default window uses UTC timestamps, not just date strings.
+    assert "T" in str(context["window_start"])
+    assert "T" in str(context["window_end"])
+    conn.close()
+
+
+def test_worklog_window_is_since_last_log(tmp_path: Path) -> None:
+    """Default assemble_worklog_context window starts at the last worklog's
+    created_at, not at midnight, so successive drafts don't double-count."""
+    config = _config_with_roles(db_path=str(tmp_path / "app.sqlite3"))
+    db_path = init_db(config)
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+
+    # Simulate a worklog generated at an arbitrary past timestamp.
+    cutoff = "2026-04-20T12:00:00+00:00"
+    conn.execute(
+        "INSERT INTO worklogs (log_date, title, content_md, source_summary_json, created_at, updated_at) "
+        "VALUES (?, ?, ?, ?, ?, ?)",
+        ("2026-04-20", "Old log", "# old", "{}", cutoff, cutoff),
+    )
+    conn.commit()
+
+    # Item created AFTER the cutoff — should appear in the new window.
+    after = create_item(conn, ItemCreate(title="after cutoff", source="manual"))
+
+    # Item created BEFORE the cutoff (manually back-date created_at). Must
+    # NOT appear in the window.
+    before = create_item(conn, ItemCreate(title="before cutoff", source="manual"))
+    conn.execute(
+        "UPDATE items SET created_at = ?, updated_at = ? WHERE id = ?",
+        ("2026-04-20T09:00:00+00:00", "2026-04-20T09:00:00+00:00", before["id"]),
+    )
+    conn.commit()
+
+    context = assemble_worklog_context(conn)
+    assert context["window_start"] == cutoff
+    titles = [i["title"] for i in context["created"]]
+    assert "after cutoff" in titles
+    assert "before cutoff" not in titles
     conn.close()
 
 
@@ -237,6 +277,29 @@ def test_delete_items_removes_rows_and_nulls_events(tmp_path: Path) -> None:
     assert conn.execute("SELECT COUNT(*) FROM items").fetchone()[0] == 0
     rows = conn.execute("SELECT item_id FROM events WHERE event_type = 'created'").fetchall()
     assert rows and all(r["item_id"] is None for r in rows)
+    conn.close()
+
+
+def test_update_item_priority_persists(tmp_path: Path) -> None:
+    """Direct backend verification: ItemUpdate(priority=N) must write
+    priority to the items row. Used to catch regressions where the patch
+    path silently drops priority."""
+    from backend.models.schemas import ItemUpdate
+    from backend.services.item_service import update_item
+
+    config = _config_with_roles(db_path=str(tmp_path / "a.sqlite3"))
+    init_db(config)
+    conn = sqlite3.connect(init_db(config))
+    conn.row_factory = sqlite3.Row
+    item = create_item(conn, ItemCreate(title="x", source="manual"))
+    assert item["priority"] == 3  # ItemCreate default
+
+    updated = update_item(conn, item["id"], ItemUpdate(priority=1))
+    assert updated is not None
+    assert updated["priority"] == 1
+
+    row = conn.execute("SELECT priority FROM items WHERE id = ?", (item["id"],)).fetchone()
+    assert row["priority"] == 1
     conn.close()
 
 

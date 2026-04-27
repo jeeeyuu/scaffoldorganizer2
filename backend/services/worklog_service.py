@@ -13,30 +13,70 @@ from backend.utils.time import local_date, utc_now
 
 
 def assemble_worklog_context(conn: sqlite3.Connection, log_date: str | None = None) -> dict:
-    day = log_date or local_date()
-    pattern = f"{day}%"
+    """Collect the events, items and sessions that should feed the next
+    worklog draft.
+
+    Two modes:
+
+    * **explicit date** — caller passes `log_date="YYYY-MM-DD"`. We cover
+      that calendar day's full span (00:00 → 23:59 UTC).
+    * **default / "since last log"** — caller passes nothing. We cover
+      everything since the most recent `worklogs` row was created, up to
+      `now`. If no prior worklog exists we fall back to the start of
+      today. This is what the GUI's Work Log button uses, so successive
+      drafts don't double-report the same activity.
+    """
+
+    now = utc_now()
+    if log_date:
+        day = log_date
+        window_start = f"{day}T00:00:00+00:00"
+        window_end = f"{day}T23:59:59+00:00"
+    else:
+        day = local_date()
+        prev = conn.execute(
+            "SELECT created_at FROM worklogs ORDER BY created_at DESC LIMIT 1"
+        ).fetchone()
+        window_start = str(prev["created_at"]) if prev else f"{day}T00:00:00+00:00"
+        window_end = now
+
     events = [dict(row) for row in conn.execute(
-        "SELECT * FROM events WHERE created_at LIKE ? ORDER BY created_at ASC",
-        (pattern,),
+        "SELECT * FROM events WHERE created_at >= ? AND created_at <= ? ORDER BY created_at ASC",
+        (window_start, window_end),
     ).fetchall()]
     items = [dict(row) for row in conn.execute(
-        "SELECT * FROM items WHERE created_at LIKE ? OR updated_at LIKE ? OR completed_at LIKE ? ORDER BY updated_at ASC",
-        (pattern, pattern, pattern),
+        "SELECT * FROM items "
+        "WHERE (created_at   >= ? AND created_at   <= ?) "
+        "   OR (updated_at   >= ? AND updated_at   <= ?) "
+        "   OR (completed_at >= ? AND completed_at <= ?) "
+        "ORDER BY updated_at ASC",
+        (window_start, window_end) * 3,
     ).fetchall()]
     sessions = [dict(row) for row in conn.execute(
-        "SELECT * FROM sessions WHERE created_at LIKE ? OR updated_at LIKE ? ORDER BY updated_at ASC",
-        (pattern, pattern),
+        "SELECT * FROM sessions "
+        "WHERE (created_at >= ? AND created_at <= ?) "
+        "   OR (updated_at >= ? AND updated_at <= ?) "
+        "ORDER BY updated_at ASC",
+        (window_start, window_end) * 2,
     ).fetchall()]
+
+    def _in_window(ts: object) -> bool:
+        if not ts:
+            return False
+        return window_start <= str(ts) <= window_end
+
     return {
         "log_date": day,
+        "window_start": window_start,
+        "window_end": window_end,
         "events": events,
-        "created": [item for item in items if str(item.get("created_at", "")).startswith(day)],
-        "started": [event for event in events if event.get("event_type") == "status_changed" and event.get("to_status") == "doing"],
-        "doing": [item for item in items if item.get("status") == "doing"],
-        "completed": [item for item in items if str(item.get("completed_at") or "").startswith(day)],
-        "thoughts": [item for item in items if item.get("item_type") in {"thought", "journal_seed", "note"}],
-        "sessions": sessions,
-        "next_actions": [item for item in items if item.get("status") in {"todo", "doing"}],
+        "created":   [i for i in items if _in_window(i.get("created_at"))],
+        "started":   [e for e in events if e.get("event_type") == "status_changed" and e.get("to_status") == "doing"],
+        "doing":     [i for i in items if i.get("status") == "doing"],
+        "completed": [i for i in items if _in_window(i.get("completed_at"))],
+        "thoughts":  [i for i in items if i.get("item_type") in {"thought", "journal_seed", "note"}],
+        "sessions":  sessions,
+        "next_actions": [i for i in items if i.get("status") in {"todo", "doing"}],
     }
 
 
