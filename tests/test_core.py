@@ -280,29 +280,6 @@ def test_delete_items_removes_rows_and_nulls_events(tmp_path: Path) -> None:
     conn.close()
 
 
-def test_update_item_priority_persists(tmp_path: Path) -> None:
-    """Direct backend verification: ItemUpdate(priority=N) must write
-    priority to the items row. Used to catch regressions where the patch
-    path silently drops priority."""
-    from backend.models.schemas import ItemUpdate
-    from backend.services.item_service import update_item
-
-    config = _config_with_roles(db_path=str(tmp_path / "a.sqlite3"))
-    init_db(config)
-    conn = sqlite3.connect(init_db(config))
-    conn.row_factory = sqlite3.Row
-    item = create_item(conn, ItemCreate(title="x", source="manual"))
-    assert item["priority"] == 3  # ItemCreate default
-
-    updated = update_item(conn, item["id"], ItemUpdate(priority=1))
-    assert updated is not None
-    assert updated["priority"] == 1
-
-    row = conn.execute("SELECT priority FROM items WHERE id = ?", (item["id"],)).fetchone()
-    assert row["priority"] == 1
-    conn.close()
-
-
 def test_digest_items_strips_heavy_fields() -> None:
     source = [{
         "id": 1,

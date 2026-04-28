@@ -406,20 +406,38 @@ h1 {
   border-radius: 4px;
   background: var(--panel);
 }
-.item-card .edit-priority {
-  flex: 0 0 auto;
-  font-size: 11px;
-  padding: 2px 4px;
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  background: var(--panel);
-  min-height: 22px;
-}
 .item-card .edit-content {
   margin-top: 4px;
   resize: vertical;
   min-height: 60px;
 }
+
+/* Priority toggle row — replaces native <select> for better WebView compat */
+.edit-priority-row {
+  display: flex;
+  gap: 3px;
+  margin: 4px 0;
+}
+
+.priority-btn {
+  flex: 1;
+  min-height: 22px;
+  padding: 0 4px;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 100ms ease, color 100ms ease, border-color 100ms ease;
+}
+
+.priority-btn[data-priority="1"].active { background: var(--red);   color: #fff; border-color: var(--red);   }
+.priority-btn[data-priority="2"].active { background: var(--amber); color: #fff; border-color: var(--amber); }
+.priority-btn[data-priority="3"].active { background: var(--blue);  color: #fff; border-color: var(--blue);  }
+.priority-btn[data-priority="4"].active { background: var(--muted); color: #fff; border-color: var(--muted); }
+.priority-btn[data-priority="5"].active { color: var(--muted); border-color: var(--muted); }
 
 .meta {
   color: var(--muted);

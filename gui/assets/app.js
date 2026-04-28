@@ -208,13 +208,17 @@ function renderItemViewMode(item, priority) {
 
 function renderItemEditMode(item) {
   const priority = Number(item.priority) || 3;
+  const priorityBtns = [1, 2, 3, 4, 5]
+    .map((p) => `<button type="button" class="priority-btn${p === priority ? " active" : ""}" data-priority="${p}">P${p}</button>`)
+    .join("");
   return `
     <header class="card-head">
       <input class="edit-title" type="text" value="${escapeHtml(item.title)}" data-id="${item.id}" maxlength="120" />
-      <select class="edit-priority" data-id="${item.id}">
-        ${[1, 2, 3, 4, 5].map((p) => `<option value="${p}" ${p === priority ? "selected" : ""}>P${p}</option>`).join("")}
-      </select>
     </header>
+    <div class="edit-priority-row">
+      <input type="hidden" class="edit-priority" value="${priority}" />
+      ${priorityBtns}
+    </div>
     <textarea class="edit-content" data-id="${item.id}" rows="3">${escapeHtml(item.content || "")}</textarea>
     <footer class="card-actions">
       <button data-action="save-edit" data-id="${item.id}">Save</button>
@@ -411,6 +415,18 @@ document.addEventListener("click", async (event) => {
   const target = event.target;
   if (!(target instanceof HTMLElement)) return;
   if (target.matches(".tabs button")) switchTab(target.dataset.tab);
+  // Priority toggle buttons in edit mode
+  if (target.classList.contains("priority-btn") && target.dataset.priority) {
+    const card = target.closest(".item-card");
+    if (!card) return;
+    const newPriority = Number(target.dataset.priority);
+    const hiddenInput = card.querySelector(".edit-priority");
+    if (hiddenInput) hiddenInput.value = String(newPriority);
+    card.querySelectorAll(".priority-btn").forEach((btn) => {
+      btn.classList.toggle("active", Number(btn.dataset.priority) === newPriority);
+    });
+    return;
+  }
   if (target.dataset.status && target.dataset.id) {
     await withBusy(target, async () => {
       try {
