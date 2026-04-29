@@ -269,7 +269,7 @@ class TelegramPollingService:
                     item_type=classification.get("item_type", "task"),
                     title=classification.get("title") or text[:120],
                     content=text,
-                    status=classification.get("status", "inbox"),
+                    status="inbox",
                     horizon=classification.get("horizon", "now"),
                     priority=int(classification.get("priority", 3)),
                     source="telegram",
